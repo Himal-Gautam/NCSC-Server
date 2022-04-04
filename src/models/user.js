@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Task from "./notice.js";
+import Notice from "./notice.js";
+import Subject from "./subject.js";
 import "dotenv/config";
 import chalk from 'chalk'
 
@@ -38,6 +39,7 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: Number,
       default: 0,
+      unique: true,
       // validate(value) {
       //   if (!validator.isMobilePhone(value)) {
       //       throw new Error("Phone number is invalid");
@@ -87,10 +89,22 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.virtual("tasks", {
-  ref: "Task",
-  localField: "_id",
+userSchema.virtual("notices", {
+  ref: "Notice",
+  localField: "name",
   foreignField: "owner",
+});
+
+userSchema.virtual("attendances", {
+  ref: "Attendance",
+  localField: "name",
+  foreignField: "student",
+});
+
+userSchema.virtual("subjects", {
+  ref: "Subject",
+  localField: "name",
+  foreignField: "teacher",
 });
 
 userSchema.methods.toJSON = function () {

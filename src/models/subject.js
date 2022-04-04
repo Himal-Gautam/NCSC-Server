@@ -1,24 +1,23 @@
 import mongoose from 'mongoose'
 
-const noticeSchema = new mongoose.Schema({
-    title: {
+const subjectSchema = new mongoose.Schema({
+    name: {
         type: String,
         required: true,
         trim: true
     },
-    description: {
+    code: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        default: "000"
     },
-    owner:{
+    teacher:{
         type: String,
         required: true,
         ref: 'User'
     }
-},{
-    timestamps: true
 })
 
-const Notice = mongoose.model('Notice', noticeSchema)
-export default Notice
+const Subject = mongoose.model('Subject', subjectSchema)
+export default Subject
