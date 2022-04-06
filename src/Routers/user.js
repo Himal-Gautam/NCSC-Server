@@ -3,6 +3,7 @@ import User from "../models/user.js";
 import auth from "../middleware/auth.js";
 import { request } from "express";
 import chalk from "chalk";
+import { Auth } from "two-step-auth";
 const router = new express.Router();
 
 const success = true;
@@ -15,8 +16,6 @@ router.post("/users", async (req, res) => {
     await user.save();
     console.log("user saved");
 
-    // const token = await user.generateAuthToken()
-    // res.status(201).send(user)
   } catch (e) {
     res.status(400).send(e);
   }
@@ -85,12 +84,11 @@ router.get("/users", auth, async (req, res) => {
   } catch (error) {
     res.status(401).send(error);
   }
-  res.status(202).send(req.user);
 });
 
-router.patch("/users/me", auth, async (req, res) => {
+router.patch("/users/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age"];
+  const allowedUpdates = ["name", "email", "password", "age", "role", "uid"];
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   );
@@ -98,22 +96,63 @@ router.patch("/users/me", auth, async (req, res) => {
   if (!isValidOperation) {
     return res.status(400).send({ error: "Invalid updates!" });
   }
-
+  if (req.user["role"] == "admin") {
+    const user = await User.findOne({
+      _id: req.params.id,
+    });
+  }
+  else{
+    const user = req.user
+  }
   try {
-    updates.forEach((update) => (req.user[update] = req.body[update]));
-    await req.user.save();
+    updates.forEach((update) => (user[update] = req.body[update]));
+    await user.save();
     res.send(req.user);
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.delete("/users/me", auth, async (req, res) => {
+router.delete("/users/:id", auth, async (req, res) => {
   try {
-    await req.user.remove();
+    const user = await User.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (!user) {
+      res.status(404).send();
+    }
+    user.remove();
+    res.status(200).send(user);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.post("/users/forgot-pass/otp", async (req, res) => {
+  const email = req.body.email;
+  const resAuth = await Auth(email, "Company Name");
+  const OTP = resAuth.otp;
+  console.log(email);
+  console.log(resAuth);
+  try {
+    const user = await User.findOne({ email: email });
+    user["otp"] = OTP;
+    await user.save();
+    res.send(resAuth.success);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.patch("/users/forgot-pass/reset", async (req, res) => {
+  const email = req.body.email;
+  try {
+    const user = await User.findOne({ email: email });
+    user["password"] = req.body["password"];
+    await user.save();
     res.send(req.user);
   } catch (e) {
-    res.status(400).send();
+    res.status(400).send(e);
   }
 });
 

@@ -12,8 +12,8 @@ const subjectSchema = new mongoose.Schema({
         trim: true,
         default: "000"
     },
-    teacher:{
-        type: String,
+    teacherId:{
+        type: Number,
         required: true,
         ref: 'User'
     }

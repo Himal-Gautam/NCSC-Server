@@ -60,6 +60,15 @@ const userSchema = new mongoose.Schema(
       //   }
       // },
     },
+    otp: {
+      type: Number,
+      default: 0,
+      // validate(value) {
+      //   if (value < 0) {
+      //     throw new Error("Age must be a postive number");
+      //   }
+      // },
+    },
     password: {
       type: String,
       required: true,
@@ -103,8 +112,8 @@ userSchema.virtual("attendances", {
 
 userSchema.virtual("subjects", {
   ref: "Subject",
-  localField: "name",
-  foreignField: "teacher",
+  localField: "uid",
+  foreignField: "teacherId",
 });
 
 userSchema.methods.toJSON = function () {

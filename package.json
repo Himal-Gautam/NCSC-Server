@@ -21,6 +21,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.7.3",
     "mongoose": "^5.13.14",
+    "two-step-auth": "^1.1.2",
     "validator": "^10.11.0"
   },
   "devDependencies": {

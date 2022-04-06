@@ -1,15 +1,11 @@
 import express from "express";
 import Subject from "../models/subject.js";
-import User from "../models/user.js";
 import auth from "../middleware/auth.js";
 const router = new express.Router();
 
 router.post("/subjects", auth, async (req, res) => {
-  console.log(req.body)
-  const subject = new Subject({
-    ...req.body,
-    teacher: req.user.name,
-  });
+  console.log(req.body);
+  const subject = new Subject(req.body);
   try {
     await subject.save();
     res.status(201).send(subject);
@@ -18,16 +14,14 @@ router.post("/subjects", auth, async (req, res) => {
   }
 });
 
-// router.get("/notices", auth, async (req, res) => {
-//   // console.log(req.user, req.token);
-//   try {
-//     Notice.find({}).then(notices => 
-//       res.send(notices)
-//     );
-//   } catch (e) {
-//     res.status(500).send();
-//   }
-// });
+router.get("/subjects", auth, async (req, res) => {
+  // console.log(req.user, req.token);
+  try {
+    Subject.find({}).then((subjects) => res.send(subjects));
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // router.get('/notices/:id', auth, async (req, res) => {
 //     const _id = req.params.id
@@ -46,53 +40,50 @@ router.post("/subjects", auth, async (req, res) => {
 //     }
 // })
 
-// router.patch("/notices/:id", auth, async (req, res) => {
-//   // const updates = Object.keys(req.body);
-//   // const allowedUpdates = ["description", "title"];
-//   // const isValidOperation = updates.every((update) =>
-//   //   allowedUpdates.includes(update)
-//   // );
+router.patch("/subjects/:id", auth, async (req, res) => {
+  const updates = Object.keys(req.body);
+  // const allowedUpdates = ["description", "title"];
+  // const isValidOperation = updates.every((update) =>
+  //   allowedUpdates.includes(update)
+  // );
 
-//   // if (!isValidOperation) {
-//   //   return res.status(400).send({ error: "Invalid updates!" });
-//   // }
+  // if (!isValidOperation) {
+  //   return res.status(400).send({ error: "Invalid updates!" });
+  // }
 
-//   try {
-//     const notice = await Notice.findOne({
-//       _id: req.params.id
-//       // owner: req.user._id,
-//     });
+  try {
+    const subject = await Subject.findOne({
+      _id: req.params.id
+    });
 
-//     // updates.forEach((update) => (task[update] = req.body[update]));
-//     notice[title] = req.body[title]
-//     notice[description] = req.body[description]
-//     await notice.save();
+    updates.forEach((update) => (subject[update] = req.body[update]));
+    await subject.save();
 
-//     if (!notice) {
-//       return res.status(404).send();
-//     }
+    if (!subject) {
+      return res.status(404).send();
+    }
 
-//     res.send(notice);
-//   } catch (e) {
-//     res.status(400).send(e);
-//   }
-// });
+    res.send(subject);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 
-// router.delete("/notices/:id", auth, async (req, res) => {
-//   try {
-//     const notice = await Notice.findOneAndDelete({
-//       _id: req.params.id
-//     });
-
-//     if (!notice) {
-//       res.status(404).send();
-//     }
-//     notice.remove();
-//     res.send(notice);
-//   } catch (e) {
-//     res.status(500).send();
-//   }
-// });
+router.delete("/subjects/:id", auth, async (req, res) => {
+  try {
+    const subject = await Subject.findOneAndDelete({
+      _id: req.params.id
+    });
+    console.log("SUJECT FOUND")
+    if (!subject) {
+      res.status(404).send();
+    }
+    subject.remove();
+    res.send(subject);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // module.exports = router
 export default router;
