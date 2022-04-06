@@ -19,3 +19,5 @@ app.use(noticeRouter)
 app.listen(port, () => {
     console.log(chalk.magenta.bold.underline('Server is up on port ') + chalk.blue.bold.underline(port))
 })
+
+console.log("hi")
