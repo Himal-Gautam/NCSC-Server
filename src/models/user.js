@@ -97,7 +97,11 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-
+// userSchema.virtual("notices", {
+//   ref: "Notice",
+//   localField: "_id",
+//   foreignField: "owner",
+// });
 userSchema.virtual("notices", {
   ref: "Notice",
   localField: "name",
@@ -106,7 +110,7 @@ userSchema.virtual("notices", {
 
 userSchema.virtual("attendances", {
   ref: "Attendance",
-  localField: "name",
+  localField: "_id",
   foreignField: "student",
 });
 

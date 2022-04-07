@@ -156,4 +156,16 @@ router.patch("/users/forgot-pass/reset", async (req, res) => {
   }
 });
 
+// router.get("/users-pop", auth, async (req, res) => {
+//   try {
+//     await req.user.populate("notices").execPopulate()
+//     console.log(req.user);
+//     res.status(200).send(req.user.notices);
+//   } catch (e) {
+//     res.status(500).send();
+//   }
+// })
+
 export default router;
+
+
