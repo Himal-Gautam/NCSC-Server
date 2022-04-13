@@ -25,5 +25,11 @@ const assignmentSchema = new mongoose.Schema({
     timestamps: true
 })
 
+// userSchema.virtual("submissions", {
+//     ref: "AssignmentSubmit",
+//     localField: "_id",
+//     foreignField: "assignment_ID",
+//   });
+
 const Assignment = mongoose.model('Assignment', assignmentSchema)
 export default Assignment

@@ -8,7 +8,7 @@ router.post("/notices", auth, async (req, res) => {
   console.log(req.body);
   const notice = new Notice({
     ...req.body,
-    owner: req.user.name,
+    owner: req.user._id,
   });
   try {
     await notice.save();
@@ -18,10 +18,31 @@ router.post("/notices", auth, async (req, res) => {
   }
 });
 
+// router.get("/notices", auth, async (req, res) => {
+//   // console.log(req.user, req.token);
+//   try {
+//     Notice.find({}).then((notices) => res.send(notices));
+//   } catch (e) {
+//     res.status(500).send();
+//   }
+// });
+
 router.get("/notices", auth, async (req, res) => {
   // console.log(req.user, req.token);
   try {
-    Notice.find({}).then((notices) => res.send(notices));
+    Notice.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "owner",
+          foreignField: "_id",
+          as: "owner_info",
+        },
+      },
+      {
+        $unwind: "$owner_info",
+      },
+    ]).then((notices) => res.send(notices));
   } catch (e) {
     res.status(500).send();
   }

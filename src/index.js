@@ -4,6 +4,7 @@ import userRouter from "./routers/user.js";
 import noticeRouter from "./routers/notice.js";
 import subjectRouter from "./routers/subject.js";
 import attendanceRouter from "./routers/attendance.js";
+import assignmentRouter from "./routers/assignment.js";
 import chalk from "chalk";
 import cors from "cors";
 import "dotenv/config";
@@ -17,7 +18,7 @@ app.use(userRouter);
 app.use(subjectRouter);
 app.use(noticeRouter);
 app.use(attendanceRouter);
-
+app.use(assignmentRouter);
 
 app.listen(port, () => {
   console.log(

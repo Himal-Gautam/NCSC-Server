@@ -1,15 +1,15 @@
 import mongoose from 'mongoose'
 
-const assignmentSchema = new mongoose.Schema({
-    title: {
-        type: String,
+const assignmentSubmitSchema = new mongoose.Schema({
+    assignmentID:{
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        trim: true
+        ref: 'Assignment'
     },
-    description: {
-        type: String,
+    student:{
+        type: mongoose.Schema.Types.ObjectId,
         required: true,
-        trim: true
+        ref: 'User'
     },
     teacher:{
         type: mongoose.Schema.Types.ObjectId,
@@ -19,11 +19,11 @@ const assignmentSchema = new mongoose.Schema({
     subject:{
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'subjects'
+        ref: 'Subject'
     }
 },{
     timestamps: true
 })
 
-const Assignment = mongoose.model('Assignment', assignmentSchema)
-export default Assignment
+const AssignmentSubmit = mongoose.model('AssignmentSubmit', assignmentSubmitSchema)
+export default AssignmentSubmit

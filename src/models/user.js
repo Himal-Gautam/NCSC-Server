@@ -102,23 +102,23 @@ const userSchema = new mongoose.Schema(
 //   localField: "_id",
 //   foreignField: "owner",
 // });
-userSchema.virtual("notices", {
-  ref: "Notice",
-  localField: "name",
-  foreignField: "owner",
-});
+// userSchema.virtual("notices", {
+//   ref: "Notice",
+//   localField: "name",
+//   foreignField: "owner",
+// });
 
-userSchema.virtual("attendances", {
-  ref: "Attendance",
-  localField: "_id",
-  foreignField: "student",
-});
+// userSchema.virtual("attendances", {
+//   ref: "Attendance",
+//   localField: "_id",
+//   foreignField: "student",
+// });
 
-userSchema.virtual("subjects", {
-  ref: "Subject",
-  localField: "uid",
-  foreignField: "teacherId",
-});
+// userSchema.virtual("subjects", {
+//   ref: "Subject",
+//   localField: "uid",
+//   foreignField: "teacherId",
+// });
 
 userSchema.methods.toJSON = function () {
   const user = this;

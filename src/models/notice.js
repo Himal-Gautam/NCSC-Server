@@ -12,15 +12,15 @@ const noticeSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    owner: {
-      type: String,
-      required: true,
-      ref: "User",
-    },
     // owner: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: 'User'
+    //   type: String,
+    //   required: true,
+    //   ref: "User",
     // },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
   },
   {
     timestamps: true,
