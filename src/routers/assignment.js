@@ -21,14 +21,36 @@ router.post("/assignments", auth, async (req, res) => {
   }
 });
 
-// router.get("/notices", auth, async (req, res) => {
-//   // console.log(req.user, req.token);
-//   try {
-//     Notice.find({}).then((notices) => res.send(notices));
-//   } catch (e) {
-//     res.status(500).send();
-//   }
-// });
+router.get("/assignments", auth, async (req, res) => {
+  // console.log(req.user, req.token);
+  try {
+    Assignment.aggregate([
+      {
+        $lookup: {
+          from: "subjects",
+          localField: "subject",
+          foreignField: "_id",
+          as: "subject",
+        },
+      },
+      {
+        $unwind: "$subject",
+      },{
+        $lookup: {
+          from: "users",
+          localField: "teacher",
+          foreignField: "_id",
+          as: "teacher",
+        },
+      },
+      {
+        $unwind: "$teacher",
+      },
+    ]).then((notices) => res.send(notices));
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // router.get('/notices/:id', auth, async (req, res) => {
 //     const _id = req.params.id
