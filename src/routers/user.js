@@ -8,6 +8,7 @@ const router = new express.Router();
 
 const success = true;
 
+//create user
 router.post("/users", async (req, res) => {
   const user = new User(req.body);
   console.log("request recieved");
@@ -15,12 +16,12 @@ router.post("/users", async (req, res) => {
     console.log(user);
     await user.save();
     console.log("user saved");
-
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
+//user login
 router.post("/users/login", async (req, res) => {
   if (req) {
     console.log(chalk.green.bold("request recieved"));
@@ -45,6 +46,7 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
+//user logout
 router.post("/users/logout", auth, async (req, res) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
@@ -59,6 +61,7 @@ router.post("/users/logout", auth, async (req, res) => {
   }
 });
 
+//user logout all
 router.post("/users/logoutAll", auth, async (req, res) => {
   try {
     req.user.tokens = [];
@@ -86,6 +89,7 @@ router.get("/users", auth, async (req, res) => {
   }
 });
 
+//updateuser
 router.patch("/users/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ["name", "email", "password", "age", "role", "uid"];
@@ -96,13 +100,13 @@ router.patch("/users/:id", auth, async (req, res) => {
   if (!isValidOperation) {
     return res.status(400).send({ error: "Invalid updates!" });
   }
+
   if (req.user["role"] == "admin") {
     const user = await User.findOne({
       _id: req.params.id,
     });
-  }
-  else{
-    const user = req.user
+  } else {
+    const user = req.user;
   }
   try {
     updates.forEach((update) => (user[update] = req.body[update]));
@@ -113,6 +117,7 @@ router.patch("/users/:id", auth, async (req, res) => {
   }
 });
 
+//delete user
 router.delete("/users/:id", auth, async (req, res) => {
   try {
     const user = await User.findOneAndDelete({
@@ -129,29 +134,33 @@ router.delete("/users/:id", auth, async (req, res) => {
 });
 
 router.post("/users/forgot-pass/otp", async (req, res) => {
-  const email = req.body.email;
-  const resAuth = await Auth(email, "Company Name");
-  const OTP = resAuth.otp;
-  console.log(email);
-  console.log(resAuth);
   try {
+    const email = req.body.email;
+    const resAuth = await Auth(email, "Company Name");
+    const OTP = resAuth.OTP;
+    console.log(email);
+    console.log(resAuth);
+    console.log(OTP);
     const user = await User.findOne({ email: email });
     user["otp"] = OTP;
     await user.save();
-    res.send(resAuth.success);
+    res.send({ success: resAuth.success });
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.patch("/users/forgot-pass/reset", async (req, res) => {
-  const email = req.body.email;
+router.post("/users/forgot-pass/reset", async (req, res) => {
   try {
-    const user = await User.findOne({ email: email });
-    user["password"] = req.body["password"];
-    await user.save();
-    res.send(req.user);
+    const user = await User.findOne({ email: req.body.email });
+    if (user.otp == req.body.otp) {
+      user.password = req.body.password;
+      await user.save();
+      res.send({ success: true });
+    }
+    throw new error("OTP mismatch");
   } catch (e) {
+    console.log(e)
     res.status(400).send(e);
   }
 });
@@ -167,5 +176,3 @@ router.patch("/users/forgot-pass/reset", async (req, res) => {
 // })
 
 export default router;
-
-
