@@ -13,8 +13,7 @@ const subjectSchema = new mongoose.Schema({
         default: "000"
     },
     teacherId:{
-        type: Number,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
 })

@@ -17,7 +17,19 @@ router.post("/subjects", auth, async (req, res) => {
 router.get("/subjects", auth, async (req, res) => {
   // console.log(req.user, req.token);
   try {
-    Subject.find({}).then((subjects) => res.send(subjects));
+    Subject.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "teacherId",
+          foreignField: "_id",
+          as: "teacher",
+        },
+      },
+      {
+        $unwind: "$teacher",
+      },
+    ]).then((subjects) => res.send(subjects));
   } catch (e) {
     res.status(500).send();
   }
@@ -53,7 +65,7 @@ router.patch("/subjects/:id", auth, async (req, res) => {
 
   try {
     const subject = await Subject.findOne({
-      _id: req.params.id
+      _id: req.params.id,
     });
 
     updates.forEach((update) => (subject[update] = req.body[update]));
@@ -70,11 +82,12 @@ router.patch("/subjects/:id", auth, async (req, res) => {
 });
 
 router.delete("/subjects/:id", auth, async (req, res) => {
+  console.log("requestrecieved");
   try {
     const subject = await Subject.findOneAndDelete({
-      _id: req.params.id
+      _id: req.params.id,
     });
-    console.log("SUJECT FOUND")
+    console.log("SUJECT FOUND");
     if (!subject) {
       res.status(404).send();
     }
