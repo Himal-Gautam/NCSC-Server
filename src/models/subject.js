@@ -7,7 +7,7 @@ const subjectSchema = new mongoose.Schema({
         trim: true
     },
     code: {
-        type: String,
+        type: Number,
         required: true,
         trim: true,
         default: "000"

@@ -15,7 +15,6 @@ router.post("/subjects", auth, async (req, res) => {
 });
 
 router.get("/subjects", auth, async (req, res) => {
-  // console.log(req.user, req.token);
   try {
     Subject.aggregate([
       {

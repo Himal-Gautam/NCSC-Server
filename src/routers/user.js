@@ -92,26 +92,28 @@ router.get("/users", auth, async (req, res) => {
 //updateuser
 router.patch("/users/:id", auth, async (req, res) => {
   const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "email", "password", "age", "role", "uid"];
-  const isValidOperation = updates.every((update) =>
-    allowedUpdates.includes(update)
-  );
+  // const allowedUpdates = ["name", "email", "password", "age", "role", "uid"];
+  // const isValidOperation = updates.every((update) =>
+  //   allowedUpdates.includes(update)
+  // );
 
-  if (!isValidOperation) {
-    return res.status(400).send({ error: "Invalid updates!" });
-  }
+  // if (!isValidOperation) {
+  //   return res.status(400).send({ error: "Invalid updates!" });
+  // }
+  console.log(req.body);
+  let user = req.user;
 
   if (req.user["role"] == "admin") {
-    const user = await User.findOne({
+    user = await User.findOne({
       _id: req.params.id,
     });
-  } else {
-    const user = req.user;
   }
+
+  console.log(user);
   try {
     updates.forEach((update) => (user[update] = req.body[update]));
     await user.save();
-    res.send(req.user);
+    res.send(user);
   } catch (e) {
     res.status(400).send(e);
   }
@@ -136,14 +138,15 @@ router.delete("/users/:id", auth, async (req, res) => {
 router.post("/users/forgot-pass/otp", async (req, res) => {
   try {
     const email = req.body.email;
-    const resAuth = await Auth(email, "Company Name");
+    const user = await User.findOne({ email: email });
+    const resAuth = await Auth(email, "Company Name - Your UID " + user.uid);
     const OTP = resAuth.OTP;
     console.log(email);
     console.log(resAuth);
     console.log(OTP);
-    const user = await User.findOne({ email: email });
     user["otp"] = OTP;
-    await user.save();
+    const userUpdate1 = await user.save();
+    console.log(userUpdate1);
     res.send({ success: resAuth.success });
   } catch (e) {
     res.status(400).send(e);
@@ -157,10 +160,11 @@ router.post("/users/forgot-pass/reset", async (req, res) => {
       user.password = req.body.password;
       await user.save();
       res.send({ success: true });
+    } else {
+      throw new error("OTP mismatch");
     }
-    throw new error("OTP mismatch");
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.status(400).send(e);
   }
 });
