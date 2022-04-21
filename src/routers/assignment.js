@@ -6,15 +6,17 @@ import auth from "../middleware/auth.js";
 const router = new express.Router();
 
 router.post("/assignments", auth, async (req, res) => {
+  console.log("request recieved")
   console.log(req.body);
-  const subject = await Subject.findOne({ name: req.body.subjectName });
-  const assignment = new Assignment({
-    ...req.body,
-    teacher: req.user._id,
-    subject: subject._id,
-  });
+  // const subject = await Subject.findOne({ name: req.body.subjectName });
+  // const assignment = new Assignment({
+  //   ...req.body,
+  //   teacher: req.user._id,
+  //   subject: subject._id,
+  // });
   try {
-    await assignment.save();
+    // await assignment.save();
+    // res.status(201).send(assignment);
     res.status(201).send(assignment);
   } catch (e) {
     res.status(400).send(e);
