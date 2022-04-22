@@ -8,14 +8,14 @@ const router = new express.Router();
 router.post("/assignments", auth, async (req, res) => {
   console.log("request recieved")
   console.log(req.body);
-  // const subject = await Subject.findOne({ name: req.body.subjectName });
-  // const assignment = new Assignment({
-  //   ...req.body,
-  //   teacher: req.user._id,
-  //   subject: subject._id,
-  // });
+  const assignment = new Assignment({
+    ...req.body,
+    teacher: req.user._id,
+  });
+  console.log("assignment generated", assignment)
   try {
-    // await assignment.save();
+    await assignment.save();
+    console.log("assignment saved")
     // res.status(201).send(assignment);
     res.status(201).send(assignment);
   } catch (e) {
@@ -93,21 +93,21 @@ router.get("/assignments", auth, async (req, res) => {
 //   }
 // });
 
-// router.delete("/notices/:id", auth, async (req, res) => {
-//   try {
-//     const notice = await Notice.findOneAndDelete({
-//       _id: req.params.id,
-//     });
+router.delete("/assignments/:id", auth, async (req, res) => {
+  try {
+    const assignment = await Assignment.findOneAndDelete({
+      _id: req.params.id,
+    });
 
-//     if (!notice) {
-//       res.status(404).send();
-//     }
-//     notice.remove();
-//     res.status(200).send(notice);
-//   } catch (e) {
-//     res.status(500).send();
-//   }
-// });
+    if (!assignment) {
+      res.status(404).send();
+    }
+    assignment.remove();
+    res.status(200).send(assignment);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 // module.exports = router
 export default router;

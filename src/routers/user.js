@@ -91,6 +91,7 @@ router.get("/users", auth, async (req, res) => {
 
 //updateuser
 router.patch("/users/:id", auth, async (req, res) => {
+  console.log(req.body)
   const updates = Object.keys(req.body);
   // const allowedUpdates = ["name", "email", "password", "age", "role", "uid"];
   // const isValidOperation = updates.every((update) =>
@@ -109,10 +110,11 @@ router.patch("/users/:id", auth, async (req, res) => {
     });
   }
 
-  console.log(user);
   try {
     updates.forEach((update) => (user[update] = req.body[update]));
+    console.log(user);
     await user.save();
+    console.log("user saved")
     res.send(user);
   } catch (e) {
     res.status(400).send(e);
@@ -121,14 +123,17 @@ router.patch("/users/:id", auth, async (req, res) => {
 
 //delete user
 router.delete("/users/:id", auth, async (req, res) => {
+  console.log("delete requested", req.params.id)
   try {
     const user = await User.findOneAndDelete({
       _id: req.params.id,
     });
     if (!user) {
+      console.log("user not found", req.params.id)
       res.status(404).send();
     }
     user.remove();
+    console.log("user removed") 
     res.status(200).send(user);
   } catch (e) {
     res.status(500).send();
