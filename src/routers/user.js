@@ -149,7 +149,7 @@ router.post("/users/forgot-pass/otp", async (req, res) => {
     console.log(email);
     console.log(resAuth);
     console.log(OTP);
-    user["otp"] = OTP;
+    user["otp"] = OTP.toString();
     const userUpdate1 = await user.save();
     console.log(userUpdate1);
     res.send({ success: resAuth.success });
